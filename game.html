@@ -2,167 +2,299 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-  <title>KTJ SNAKES & LADDERS — CYBER TRACK GRID</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>KTJ MATRIX — GAME TERMINAL</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.0/dist/umd/supabase.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <style>
-    #arena-relative-container { position: relative; width: 100%; aspect-ratio: 1 / 1; }
-    #board-matrix-grid { display: grid; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(10, 1fr); background: rgba(5, 5, 10, 0.95); border: 2px solid #27272a; width: 100%; height: 100%; }
-    .tile-node { border: 1px solid rgba(63, 63, 70, 0.15); position: relative; z-index: 10; }
-    .player-token { width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 12px currentColor; z-index: 30; }
-    #vector-track-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; }
-  </style>
 </head>
-<body class="p-4 flex flex-col justify-between h-screen max-w-md mx-auto overflow-hidden">
+<body class="p-4 md:p-8 select-none bg-[#020205] text-white overflow-hidden h-screen flex flex-col justify-between">
 
-  <header class="w-full flex justify-between items-center bg-zinc-950/90 p-3 border border-zinc-900 rounded-2xl">
+  <header class="w-full max-w-md mx-auto flex justify-between items-center px-1 z-10">
     <div>
-      <h2 class="text-[10px] font-bold tracking-widest text-zinc-400 uppercase">KTJ MATRIX MATCHROOM</h2>
-      <p id="turn-readout" class="text-[9px] font-mono neon-text-cyan uppercase mt-0.5">CYBER NETWORKS CONNECTED</p>
+      <h2 id="game-username-display" class="text-xs font-bold tracking-widest text-zinc-400 uppercase">OPERATIVE: LOADING...</h2>
+      <p id="game-room-display" class="text-[8px] font-mono neon-text-cyan tracking-wider uppercase">NODE INSTANCE: FETCHING...</p>
     </div>
-    <button onclick="window.location.href='lobby.html'" class="px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-xl text-[9px] font-mono tracking-widest text-zinc-500 uppercase active:scale-95">FORFEIT</button>
+    <div class="text-right">
+      <p class="text-[8px] font-mono text-zinc-500 tracking-widest uppercase">STAKE VALUE</p>
+      <h3 id="game-stake-display" class="text-xs font-black font-mono neon-text-purple">$0.00</h3>
+    </div>
   </header>
 
-  <div id="arena-relative-container" class="my-2">
-    <div id="board-matrix-grid" class="rounded-2xl overflow-hidden p-1 gap-0.5"></div>
-    <canvas id="vector-track-canvas"></canvas>
-  </div>
+  <main class="flex-1 w-full max-w-md mx-auto flex flex-col items-center justify-center relative my-4">
+    <div id="dice-canvas-container" class="absolute inset-0 z-0 bg-zinc-950/20 border border-zinc-900/60 rounded-3xl overflow-hidden backdrop-blur-sm"></div>
 
-  <footer class="w-full bg-zinc-950/90 p-4 border border-zinc-900 rounded-3xl text-center space-y-3">
-    <div class="flex justify-between items-center px-2">
-      <span class="text-[9px] font-mono text-zinc-500 uppercase tracking-widest">GRID SLOT: <span id="idx-pos-text" class="text-white font-bold">1</span>/100</span>
-      <span class="text-[9px] font-mono text-zinc-500 uppercase tracking-widest">DICE TRANSCEIVER: <span id="dice-roll-text" class="neon-text-purple font-bold">0</span></span>
+    <div id="hud-overlay" class="relative z-10 text-center pointer-events-none space-y-2">
+      <div id="result-display-box" class="scale-0 opacity-0 bg-black/80 border border-zinc-800/80 px-6 py-3 rounded-2xl backdrop-blur-md shadow-2xl">
+        <p class="text-[9px] font-mono text-zinc-500 uppercase tracking-widest">TRANSACTION RESULTS Matrix</p>
+        <h1 id="dice-value-result" class="text-3xl font-black font-mono tracking-tighter mt-1 text-white">0</h1>
+        <p id="payout-notification" class="text-[10px] font-bold uppercase tracking-wider mt-1 text-emerald-400"></p>
+      </div>
     </div>
-    <button id="dice-trigger-btn" onclick="window.triggerDiceRollExecution()" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-xs font-black tracking-widest text-white uppercase rounded-2xl shadow-lg ktj-btn-active">
-      CYCLE QUANTUM DICE MATRIX
+  </main>
+
+  <footer class="w-full max-w-md mx-auto space-y-4 z-10">
+    <button id="roll-action-trigger" onclick="window.initiateDicePhysicsEngineLoop()" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl text-xs font-black tracking-widest text-white shadow-xl uppercase transition-all transform active:scale-95 duration-100 disabled:opacity-40 disabled:pointer-events-none">
+      INITIALIZE DICE TRANSACTION CORE
     </button>
+    
+    <div class="grid grid-cols-2 gap-4">
+      <button onclick="HardwareEngine.triggerClick(); window.location.href='lobby.html'" class="py-3 bg-zinc-900 border border-zinc-800 rounded-xl text-[10px] font-mono tracking-widest text-zinc-400 hover:text-white uppercase text-center transition-colors">
+        Abort to Lobby
+      </button>
+      <button id="reset-board-btn" onclick="window.resetSimulationState()" class="py-3 bg-zinc-900 border border-zinc-800 rounded-xl text-[10px] font-mono tracking-widest text-zinc-500 uppercase text-center pointer-events-none opacity-30 transition-all">
+        Clear Ledger View
+      </button>
+    </div>
   </footer>
 
   <script type="module">
-    let playerPosition = 1;
-    let canvas, ctx;
+    // --- LIVE SUPABASE PRODUCTION CREDENTIALS ACTIVE ---
+    const SUPABASE_URL = "https://dafyqzsnogqqcjecssny.supabase.co"; 
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhZnlxenNub2dxcWNqZWNzc255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMDEzMjMsImV4cCI6MjA5NDY3NzMyM30.T5Grf8yXfnWk0cSidsbjXBUhwhHpuQFh6ZSvsN1yA8k"; 
+    
+    const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Sourced teleport channels mapping telemetry tracks
-    const snakesAndLaddersTelemetryMap = {
-      4: 14, 9: 31, 20: 38, 28: 84, 40: 59, 51: 67, 71: 91, // LADDERS
-      17: 7, 54: 34, 62: 19, 64: 60, 87: 24, 93: 73, 99: 78  // SNAKES
+    // Read routing string metrics straight from active URL parameter fields
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomId = parseInt(urlParams.get('room')) || 1;
+    const roomCost = parseFloat(urlParams.get('cost')) || 10.00;
+
+    let scene, camera, renderer, diceMesh;
+    let currentUser = null;
+    let isSimulationRunning = false;
+
+    const HardwareEngine = {
+      vibrate: (pattern) => { if ("vibrate" in navigator) navigator.vibrate(pattern); },
+      triggerClick: () => { HardwareEngine.vibrate(10); },
+      triggerSuccess: () => { HardwareEngine.vibrate([40, 30, 40]); },
+      triggerImpact: () => { HardwareEngine.vibrate(25); },
+      triggerFailure: () => { HardwareEngine.vibrate([200, 80, 200]); }
     };
 
-    function renderAestheticBoardNodes() {
-      const grid = document.getElementById('board-matrix-grid'); grid.innerHTML = '';
-      for (let r = 9; r >= 0; r--) {
-        if (r % 2 === 1) { for (let c = 0; c < 10; c++) createNode(r * 10 + c + 1); }
-        else { for (let c = 9; c >= 0; c--) createNode(r * 10 + c + 1); }
+    // 3D REAL-TIME MECHANICAL GRAPHICS RE-RENDER FRAMEWORKS
+    function init3DGameplayCanvas() {
+      const container = document.getElementById('dice-canvas-container');
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x020205, 0.05);
+
+      camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+      camera.position.set(0, 0, 8);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      container.appendChild(renderer.domElement);
+
+      // Environment lighting arrays
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+      scene.add(ambientLight);
+
+      const cyanLight = new THREE.PointLight(0x22d3ee, 3, 30);
+      cyanLight.position.set(4, 4, 4);
+      scene.add(cyanLight);
+
+      const purpleLight = new THREE.PointLight(0xa855f7, 3, 30);
+      purpleLight.position.set(-4, -4, 4);
+      scene.add(purpleLight);
+
+      // Build precise geometric representation of a high-fidelity continuous wireframe cube
+      const geometry = new THREE.BoxGeometry(2.2, 2.2, 2.2);
+      const material = new THREE.MeshPhongMaterial({
+        color: 0x09090b,
+        emissive: 0x111827,
+        specular: 0x22d3ee,
+        shininess: 60,
+        wireframe: true
+      });
+
+      diceMesh = new THREE.Mesh(geometry, material);
+      scene.add(diceMesh);
+
+      // Listen for window scale anomalies and update pixel calculations immediately
+      window.addEventListener('resize', () => {
+        if (!container) return;
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      });
+
+      renderLoopTick();
+    }
+
+    function renderLoopTick() {
+      requestAnimationFrame(renderLoopTick);
+      if (diceMesh && !isSimulationRunning) {
+        diceMesh.rotation.x += 0.003;
+        diceMesh.rotation.y += 0.005;
       }
-      setTimeout(() => { resizeCanvasLayers(); drawCyberLaserVectors(); }, 200);
+      if (renderer && scene && camera) {
+        renderer.render(scene, camera);
+      }
     }
 
-    function createNode(num) {
-      const grid = document.getElementById('board-matrix-grid'); const div = document.createElement('div');
-      div.id = `tile-${num}`; div.className = 'tile-node flex flex-col items-center justify-center font-mono text-[8px] font-bold text-zinc-800 bg-zinc-950/40 rounded-sm';
-      div.innerHTML = `<span>${num}</span><div class="token-container flex gap-0.5 mt-0.5"></div>`; grid.appendChild(div);
+    // AUTHENTICATE INTERFACE LAYER DATA HOOKS
+    async function verifyOperationalTelemetry() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
+      }
+      currentUser = user;
+
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('username, wallet_balance, account_status')
+        .eq('id', user.id)
+        .single();
+
+      if (error || (profile && profile.account_status === 'banned')) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Map cloud text nodes to screen layout components
+      document.getElementById('game-username-display').textContent = `OPERATIVE: ${profile.username}`;
+      document.getElementById('game-room-display').textContent = `NODE INSTANCE: ROOM #${roomId}`;
+      document.getElementById('game-stake-display').textContent = `$${roomCost.toFixed(2)}`;
     }
 
-    function resizeCanvasLayers() {
-      canvas = document.getElementById('vector-track-canvas'); if(!canvas) return;
-      const rect = document.getElementById('arena-relative-container').getBoundingClientRect();
-      canvas.width = rect.width; canvas.height = rect.height;
-      ctx = canvas.getContext('2d');
-    }
+    // EXECUTE HARDWARE PHYSICS RUN & TRANSACTION INJECTION
+    window.initiateDicePhysicsEngineLoop = async () => {
+      if (isSimulationRunning) return;
+      HardwareEngine.triggerClick();
+      
+      const btn = document.getElementById('roll-action-trigger');
+      btn.disabled = true;
+      btn.textContent = "VERIFYING ACCOUNT STAKE BALANCE...";
 
-    function drawCyberLaserVectors() {
-      if (!ctx) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      try {
+        // 1. Fire deduction ledger pipeline via secure database RPC rules
+        const { data: newBalance, error: transactionError } = await supabase.rpc('process_payout_deduction', {
+          user_id_param: currentUser.id,
+          payout_amount: roomCost
+        });
 
-      Object.keys(snakesAndLaddersTelemetryMap).forEach(start => {
-        const end = snakesAndLaddersTelemetryMap[start];
-        const isLadder = end > start;
+        if (transactionError) throw new Error("Insufficient funds present on ledger.");
 
-        const startEl = document.getElementById(`tile-${start}`);
-        const endEl = document.getElementById(`tile-${end}`);
-        
-        if (startEl && endEl) {
-          const sRect = startEl.getBoundingClientRect();
-          const eRect = endEl.getBoundingClientRect();
-          const pRect = document.getElementById('board-matrix-grid').getBoundingClientRect();
+        isSimulationRunning = true;
+        btn.textContent = "SIMULATING DYNAMICS MATRIX...";
 
-          // Locate midpoint vectors relative to parent box dimensions
-          const x1 = (sRect.left + sRect.width / 2) - pRect.left;
-          const y1 = (sRect.top + sRect.height / 2) - pRect.top;
-          const x2 = (eRect.left + eRect.width / 2) - pRect.left;
-          const y2 = (eRect.top + eRect.height / 2) - pRect.top;
+        // Compute simulated numeric randomizer output targets
+        const simulatedTargetValue = Math.floor(Math.random() * 6) + 1;
+        const isWinnerRound = simulatedTargetValue >= 4; // High stakes: 4, 5, 6 declare immediate victory
 
-          ctx.beginPath();
-          ctx.moveTo(x1, y1);
-          ctx.lineTo(x2, y2);
+        // Generate high-speed velocity parameters for the 3D canvas mesh object
+        const spinTimeline = gsap.timeline();
+        spinTimeline.to(diceMesh.rotation, {
+          x: Math.PI * 8 + (simulatedTargetValue * 0.5),
+          y: Math.PI * 10 - (simulatedTargetValue * 0.3),
+          z: Math.PI * 4,
+          duration: 2.2,
+          ease: "back.out(1.2)",
+          onUpdate: () => { HardwareEngine.vibrate(4); },
+          onComplete: async () => {
+            HardwareEngine.triggerImpact();
+            isSimulationRunning = false;
+            
+            let finalOutputString = "";
+            let netPayoutPool = 0.00;
+
+            if (isWinnerRound) {
+              // Calculate prize output parameters (Double entry stake value minus platform commission)
+              const grossPrizePool = roomCost * 2;
+              const systemCommissionFee = roomCost * 0.10;
+              netPayoutPool = grossPrizePool - systemCommissionFee;
+
+              // 2. Inject allocation metrics straight into server profile rows via cloud ledger RPC
+              await supabase.rpc('process_immediate_deposit', {
+                user_id_param: currentUser.id,
+                deposit_amount: netPayoutPool
+              });
+
+              // 3. Document match parameters permanently into system database transaction streams
+              await supabase.from('match_history').insert([{
+                room_id: roomId,
+                entry_fee: roomCost,
+                winner_id: currentUser.id,
+                platform_commission: systemCommissionFee
+              }]);
+
+              HardwareEngine.triggerSuccess();
+              document.getElementById('dice-value-result').className = "text-3xl font-black font-mono tracking-tighter mt-1 text-emerald-400 drop-shadow-[0_0_15px_rgba(52,211,153,0.4)]";
+              finalOutputString = "STAKE SECURED";
+              document.getElementById('payout-notification').textContent = `+$${netPayoutPool.toFixed(2)} ALLOCATED`;
+            } else {
+              // Document failed round parameters permanently into transaction records
+              await supabase.from('match_history').insert([{
+                room_id: roomId,
+                entry_fee: roomCost,
+                winner_id: null,
+                platform_commission: roomCost
+              }]);
+
+              HardwareEngine.triggerFailure();
+              document.getElementById('dice-value-result').className = "text-3xl font-black font-mono tracking-tighter mt-1 text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.4)]";
+              finalOutputString = "STAKE LIQUIDATED";
+              document.getElementById('payout-notification').textContent = `-$${roomCost.toFixed(2)} REMOVED`;
+            }
+
+            // Display tactical HUD metrics over the 3D graphics frame smoothly
+            document.getElementById('dice-value-result').textContent = `VALUE: ${simulatedTargetValue} [${finalOutputString}]`;
+            
+            gsap.fromTo("#result-display-box", 
+              { scale: 0.8, opacity: 0 }, 
+              { scale: 1, opacity: 1, duration: 0.25, ease: "power2.out" }
+            );
+
+            btn.textContent = "TRANSACTION ROUND FINALIZED";
+            
+            // Activate structural reset controls on dashboard interface
+            const resetBtn = document.getElementById('reset-board-btn');
+            resetBtn.className = "py-3 bg-zinc-900 border border-zinc-700 rounded-xl text-[10px] font-mono tracking-widest text-white uppercase text-center cursor-pointer active:scale-95 transition-all";
+            resetBtn.style.pointerEvents = "auto";
+            resetBtn.style.opacity = "1";
+          }
+        });
+
+      } catch (err) {
+        HardwareEngine.triggerFailure();
+        alert(`Core Ledger Exception: ${err.message}`);
+        btn.disabled = false;
+        btn.textContent = "INITIALIZE DICE TRANSACTION CORE";
+      }
+    };
+
+    window.resetSimulationState = () => {
+      HardwareEngine.triggerClick();
+      
+      gsap.to("#result-display-box", {
+        scale: 0.8,
+        opacity: 0,
+        duration: 0.18,
+        onComplete: () => {
+          document.getElementById('payout-notification').textContent = "";
           
-          // Style assignments: Cyan beams for climbing ladders, neon-purple tracks for traps
-          ctx.strokeStyle = isLadder ? 'rgba(56, 189, 248, 0.45)' : 'rgba(168, 85, 247, 0.45)';
-          ctx.lineWidth = 2;
-          ctx.setLineDash(isLadder ? [] : [4, 4]); // Dashed paths for hazards
-          ctx.stroke();
+          const btn = document.getElementById('roll-action-trigger');
+          btn.disabled = false;
+          btn.textContent = "INITIALIZE DICE TRANSACTION CORE";
 
-          // Terminating portal dots
-          ctx.beginPath(); ctx.arc(x1, y1, 3, 0, 2 * Math.PI);
-          ctx.fillStyle = isLadder ? '#38bdf8' : '#a855f7'; ctx.fill();
+          const resetBtn = document.getElementById('reset-board-btn');
+          resetBtn.className = "py-3 bg-zinc-900 border border-zinc-800 rounded-xl text-[10px] font-mono tracking-widest text-zinc-500 uppercase text-center pointer-events-none opacity-30 transition-all";
+          resetBtn.style.pointerEvents = "none";
+          
+          verifyOperationalTelemetry();
         }
       });
-    }
-
-    window.triggerDiceRollExecution = () => {
-      if ("vibrate" in navigator) navigator.vibrate(12);
-      const btn = document.getElementById('dice-trigger-btn'); btn.disabled = true;
-
-      const result = Math.floor(Math.random() * 6) + 1;
-      document.getElementById('dice-roll-text').textContent = result;
-      gsap.fromTo("#dice-roll-text", { scale: 1.5 }, { scale: 1, duration: 0.3 });
-
-      setTimeout(() => {
-        let targetPos = playerPosition + result;
-        if (targetPos > 100) targetPos = playerPosition; else playerPosition = targetPos;
-
-        refreshPlayerVisualPositions();
-
-        if (snakesAndLaddersTelemetryMap[playerPosition]) {
-          const old = playerPosition; playerPosition = snakesAndLaddersTelemetryMap[playerPosition];
-          const isLadder = playerPosition > old;
-
-          setTimeout(() => {
-            if (isLadder) {
-              if ("vibrate" in navigator) navigator.vibrate([40, 30, 40]);
-              gsap.fromTo("#board-matrix-grid", { filter: "brightness(1.5) drop-shadow(0 0 15px #38bdf8)" }, { filter: "brightness(1)", duration: 0.4 });
-            } else {
-              if ("vibrate" in navigator) navigator.vibrate(200);
-              gsap.fromTo("#board-matrix-grid", { filter: "brightness(0.3) saturate(2)" }, { filter: "brightness(1)", duration: 0.4 });
-            }
-            refreshPlayerVisualPositions();
-          }, 450);
-        }
-
-        if (playerPosition === 100) {
-          alert("👑 ROOM COMPLETED! MATCH STAKES DISPATCHED TO WALLET CORE.");
-          window.location.href = 'lobby.html'; return;
-        }
-        btn.disabled = false;
-      }, 500);
     };
 
-    function refreshPlayerVisualPositions() {
-      document.querySelectorAll('.player-token').forEach(t => t.remove());
-      const currentCell = document.getElementById(`tile-${playerPosition}`);
-      if (currentCell) {
-        const token = document.createElement('div'); token.className = 'player-token bg-cyan-400 text-cyan-400';
-        currentCell.querySelector('.token-container').appendChild(token);
-        document.getElementById('idx-pos-text').textContent = playerPosition;
-        gsap.fromTo(token, { scale: 0.1 }, { scale: 1, duration: 0.35, ease: "back.out(1.5)" });
-      }
-    }
-
-    window.addEventListener('DOMContentLoaded', () => { renderAestheticBoardNodes(); });
-    window.addEventListener('resize', () => { resizeCanvasLayers(); drawCyberLaserVectors(); refreshPlayerVisualPositions(); });
+    window.addEventListener('DOMContentLoaded', () => {
+      init3DGameplayCanvas();
+      verifyOperationalTelemetry();
+    });
   </script>
 </body>
 </html>

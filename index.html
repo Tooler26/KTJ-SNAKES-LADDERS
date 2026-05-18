@@ -11,12 +11,13 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.0/dist/umd/supabase.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="select-none overflow-hidden">
+<body class="select-none overflow-hidden bg-[#020205] text-white font-sans">
 
-  <div id="webgl-canvas-container"></div>
+  <div id="webgl-canvas-container" class="absolute inset-0 z-0 pointer-events-none"></div>
 
   <div id="boot-terminal" class="fixed inset-0 bg-[#020205] z-50 flex flex-col justify-between p-6 font-mono text-xs text-cyan-400">
     <div id="terminal-log" class="space-y-1 overflow-hidden max-w-2xl">
@@ -31,7 +32,7 @@
   <div id="security-lockout" class="hidden fixed inset-0 z-50 bg-[#0c0101] flex flex-col items-center justify-center p-6 font-mono text-center">
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(220,38,38,0.12)_0%,transparent_70%)] animate-pulse"></div>
     <div class="w-full max-w-md p-8 border border-red-900/50 bg-black/80 rounded-3xl backdrop-blur-xl relative space-y-6 shadow-[0_0_50px_rgba(220,38,38,0.15)]">
-      <div class="text-6xl text-red-600 font-black tracking-tighter animate-ping absolute -top-8 left-1/2 -translate-x-1/2 opacity-20">🛑</div>
+      <div class="text-6xl text-red-600 font-black tracking-tighter absolute -top-8 left-1/2 -translate-x-1/2 opacity-20">🛑</div>
       <h2 class="text-xl font-black tracking-widest text-red-500 uppercase glitch-text">COMPLIANCE FAULT DETECTED</h2>
       <div class="bg-red-950/20 border border-red-900/30 p-4 rounded-xl text-left space-y-1.5 text-[11px] text-red-400 font-mono">
         <p class="text-zinc-500">// SECURITY SUBSYSTEM FLAG INDICATION:</p>
@@ -44,53 +45,54 @@
   </div>
 
   <div id="scroll-wrapper" class="relative z-10 w-full h-screen overflow-y-auto opacity-0 pointer-events-none">
+    
     <section class="min-h-screen w-full flex flex-col items-center justify-center relative p-6 text-center">
       <div id="hero-logo-wrapper" class="mb-4 w-full max-w-[280px] md:max-w-[340px] transition-transform duration-200 ease-out">
         <img src="1000243662.png" alt="KTJ Master Crest" class="w-full h-auto drop-shadow-[0_0_35px_rgba(56,189,248,0.25)]">
       </div>
-      <div class="max-w-md ktj-card p-5 border-zinc-800/60 backdrop-blur-md">
-        <p class="text-[10px] font-mono neon-text-cyan tracking-widest uppercase mb-1">REAL-MONEY PROTOCOLS ONLINE</p>
+      <div class="max-w-md border border-zinc-800/60 bg-zinc-950/40 p-5 rounded-2xl backdrop-blur-md">
+        <p class="text-[10px] font-mono text-cyan-400 tracking-widest uppercase mb-1">REAL-MONEY PROTOCOLS ONLINE</p>
         <p class="text-xs font-mono text-zinc-400 leading-relaxed">
           Unlock high-stakes table instances. Dominate the 100-tile dynamic grid to harvest immediate room prize allocations.
         </p>
       </div>
-      <div class="mt-8 px-6 py-3 bg-gradient-to-r from-sky-500 to-purple-600 rounded-xl text-xs font-black tracking-widest text-white uppercase shadow-lg cursor-pointer ktj-btn-active" onclick="document.getElementById('auth-section').scrollIntoView({behavior: 'smooth'})">
+      <div class="mt-8 px-6 py-3 bg-gradient-to-r from-sky-500 to-purple-600 rounded-xl text-xs font-black tracking-widest text-white uppercase shadow-lg cursor-pointer transform transition active:scale-95" onclick="document.getElementById('auth-section').scrollIntoView({behavior: 'smooth'})">
         AUTHENTICATE IDENTITY PORTAL
       </div>
     </section>
 
     <section id="auth-section" class="min-h-screen w-full flex items-center justify-center p-4 relative">
-      <div class="w-full max-w-md ktj-card p-8 text-center border-zinc-800/80">
+      <div class="w-full max-w-md border border-zinc-800/80 bg-zinc-950/60 backdrop-blur-xl p-8 text-center rounded-3xl shadow-2xl">
         <div class="mb-6">
-          <h2 class="text-sm font-bold tracking-widest neon-text-cyan uppercase">IDENTITY SECURITY NODE</h2>
+          <h2 class="text-sm font-bold tracking-widest text-cyan-400 uppercase">IDENTITY SECURITY NODE</h2>
           <p class="text-[9px] font-mono text-zinc-500 uppercase tracking-wider mt-1">Regulatory age matrix tracking active</p>
         </div>
 
         <div class="flex gap-4 mb-6 border-b border-zinc-900 pb-4 text-xs font-mono tracking-widest">
-          <button id="tab-login" onclick="window.switchAuthTab('login')" class="flex-1 neon-text-cyan font-bold">RE-LOG KEY</button>
-          <button id="tab-signup" onclick="window.switchAuthTab('signup')" class="flex-1 text-zinc-500">NEW MANIFEST</button>
+          <button id="tab-login" onclick="window.switchAuthTab('login')" class="flex-1 text-cyan-400 font-bold transition-all">RE-LOG KEY</button>
+          <button id="tab-signup" onclick="window.switchAuthTab('signup')" class="flex-1 text-zinc-500 transition-all">NEW MANIFEST</button>
         </div>
 
         <div class="space-y-4 text-left">
           <div id="wrapper-username" class="hidden space-y-4">
             <div>
               <label class="text-[9px] text-zinc-400 tracking-widest font-mono block mb-1">OPERATIVE CODENAME</label>
-              <input id="auth-username" type="text" placeholder="Thulani" class="w-full neon-input rounded-xl px-4 py-3 text-xs text-white">
+              <input id="auth-username" type="text" placeholder="Thulani" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-cyan-500">
             </div>
             <div>
-              <label class="text-[9px] neon-text-purple tracking-widest font-mono block mb-1">DATE OF ORIGIN (MUST BE 18+)</label>
-              <input id="auth-dob" type="date" class="w-full neon-input rounded-xl px-4 py-3 text-xs text-white">
+              <label class="text-[9px] text-purple-400 tracking-widest font-mono block mb-1">DATE OF ORIGIN (MUST BE 18+)</label>
+              <input id="auth-dob" type="date" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-purple-500">
             </div>
           </div>
           <div>
             <label class="text-[9px] text-zinc-400 tracking-widest font-mono block mb-1">SECURE EMAIL ENDPOINT</label>
-            <input id="auth-email" type="email" placeholder="core@ktj.corp" class="w-full neon-input rounded-xl px-4 py-3 text-xs text-white">
+            <input id="auth-email" type="email" placeholder="core@ktj.corp" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-cyan-500">
           </div>
           <div>
             <label class="text-[9px] text-zinc-400 tracking-widest font-mono block mb-1">DECRYPT PASS-PHRASE</label>
-            <input id="auth-password" type="password" placeholder="••••••••" class="w-full neon-input rounded-xl px-4 py-3 text-xs text-white">
+            <input id="auth-password" type="password" placeholder="••••••••" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-cyan-500">
           </div>
-          <button onclick="window.handleAuthSubmit()" class="w-full py-4 mt-4 bg-gradient-to-r from-sky-500 to-purple-600 rounded-xl text-xs font-black tracking-widest text-white uppercase shadow-lg ktj-btn-active">
+          <button onclick="window.handleAuthSubmit()" class="w-full py-4 mt-4 bg-gradient-to-r from-sky-500 to-purple-600 rounded-xl text-xs font-black tracking-widest text-white uppercase shadow-lg transform transition active:scale-95">
             Initialize Security Loop
           </button>
         </div>
@@ -99,10 +101,21 @@
   </div>
 
   <script type="module">
-    // REGISTER PROGRESSIVE WEB APP FRAMEWORK
+    // --- LIVE SUPABASE PRODUCTION CREDENTIALS ACTIVE ---
+    const SUPABASE_URL = "https://dafyqzsnogqqcjecssny.supabase.co"; 
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhZnlxenNub2dxcWNqZWNzc255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMDEzMjMsImV4cCI6MjA5NDY3NzMyM30.T5Grf8yXfnWk0cSidsbjXBUhwhHpuQFh6ZSvsN1yA8k"; 
+    
+    let supabase = null;
+    try {
+      supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } catch(e) { 
+      console.error("FATAL: Live cloud connection cluster refused.", e); 
+    }
+
+    // Register PWA Offline Caching
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(err => console.log("SW Registry offline", err));
+        navigator.serviceWorker.register('./sw.js').catch(err => console.log("SW offline configuration initialized"));
       });
     }
 
@@ -120,11 +133,11 @@
       const logBox = document.getElementById('terminal-log');
       const progressBar = document.getElementById('boot-progress');
       const lines = [
-        "VERIFYING PWA MANIFEST ARCHITECTURE MAPS...",
-        "MOUNTING HARDWARE-ACCELERATED THREE.JS RENDERER...",
-        "HOOKING INTUITIVE NAVIGATION ROUTING CONTROLLERS...",
-        "INJECTING DEVICE GYROSCOPE ORIENTATION HANDLERS...",
-        "COMPLIANCE CORE ACTIVE. SECURITY SANDBOX GRANTED."
+        "ESTABLISHING SECURE CLOUD HANDSHAKE FOR ID: dafyqzsn...",
+        "VERIFYING REMOTE ROW-LEVEL SECURITY HANDLERS...",
+        "INITIALIZING TACTILE ENFORCEMENT ROUTERS...",
+        "SYNCING LIVE PRODUCTION INTERFACE ENVIRONMENT...",
+        "CLOUD TRANSCEIVER CONNECTED. ACCESS PORTAL GRANTED."
       ];
       let currentIdx = 0;
 
@@ -162,10 +175,9 @@
       crystalMesh = new THREE.Mesh(new THREE.IcosahedronGeometry(2, 1), new THREE.MeshPhongMaterial({ color: 0x09090b, emissive: 0x1e1b4b, wireframe: true, flatShading: true }));
       scene.add(crystalMesh);
 
-      // GYROSCOPE/DEVICE ORIENTATION DYNAMIC PARALLAX ENGINE
       if (window.DeviceOrientationEvent) {
         window.addEventListener('deviceorientation', (e) => {
-          const tiltX = (e.gamma || 0) / 45; // Constrain axis ratios
+          const tiltX = (e.gamma || 0) / 45;
           const tiltY = (e.beta || 0) / 45;
           gsap.to(crystalMesh.rotation, { x: tiltY * 0.5, y: tiltX * 0.5, duration: 0.6, ease: "power1.out" });
           gsap.to("#hero-logo-wrapper", { x: tiltX * 15, y: tiltY * 15, duration: 0.4, ease: "power1.out" });
@@ -187,32 +199,78 @@
       const tLogin = document.getElementById('tab-login'); const tSignup = document.getElementById('tab-signup');
       if (mode === 'signup') {
         wrap.classList.remove('hidden');
-        tSignup.className = "flex-1 neon-text-purple font-bold"; tLogin.className = "flex-1 text-zinc-500";
+        tSignup.className = "flex-1 text-purple-400 font-bold"; tLogin.className = "flex-1 text-zinc-500";
       } else {
         wrap.classList.add('hidden');
-        tLogin.className = "flex-1 neon-text-cyan font-bold"; tSignup.className = "flex-1 text-zinc-500";
+        tLogin.className = "flex-1 text-cyan-400 font-bold"; tSignup.className = "flex-1 text-zinc-500";
       }
     };
 
-    window.handleAuthSubmit = () => {
+    window.handleAuthSubmit = async () => {
       const email = document.getElementById('auth-email').value.trim();
       const pass = document.getElementById('auth-password').value.trim();
       const user = document.getElementById('auth-username').value.trim() || "THULANI";
       const dob = document.getElementById('auth-dob').value;
 
-      if (!email || !pass) { HardwareEngine.triggerLockoutFailure(); return alert("Validation tracking parameters missing."); }
+      if (!email || !pass) { HardwareEngine.triggerLockoutFailure(); return alert("Required verification fields are missing."); }
 
-      if (activeAuthMode === "signup") {
-        const birth = new Date(dob); const today = new Date(); let age = today.getFullYear() - birth.getFullYear();
-        if (today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) age--;
-        
-        if (age < 18) { executeLockoutSequence(); return; }
+      try {
+        if (activeAuthMode === "signup") {
+          if (!dob) return alert("Date of Birth is strictly required for legal age compliance verification.");
+
+          // 1. Process sign up on backend system identity manager
+          const { data, error } = await supabase.auth.signUp({ email, password: pass });
+          if (error) throw error;
+
+          if (data.user) {
+            // 2. Insert player attributes into secure profiles record table
+            const { error: profileError } = await supabase
+              .from('profiles')
+              .insert([{ id: data.user.id, username: user.toUpperCase(), date_of_birth: dob }]);
+            
+            if (profileError) throw profileError;
+
+            // 3. Immediately pull record row telemetry to read database trigger enforcement output
+            const { data: checkProfile } = await supabase
+              .from('profiles')
+              .select('account_status')
+              .eq('id', data.user.id)
+              .single();
+
+            if (checkProfile && checkProfile.account_status === 'banned') {
+              executeLockoutSequence();
+              return;
+            }
+
+            HardwareEngine.triggerSuccess();
+            alert("Registration successful! Decrypt credentials via Re-Log Key tab to initialize dynamic engine.");
+            window.switchAuthTab('login');
+          }
+        } else {
+          // Process secure live session user verification login
+          const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
+          if (error) throw error;
+
+          if (data.user) {
+            const { data: currentProfile, error: profileFetchErr } = await supabase
+              .from('profiles')
+              .select('account_status')
+              .eq('id', data.user.id)
+              .single();
+
+            if (profileFetchErr || (currentProfile && currentProfile.account_status === 'banned')) {
+              executeLockoutSequence();
+              return;
+            }
+
+            HardwareEngine.triggerSuccess();
+            window.location.href = 'lobby.html';
+          }
+        }
+      } catch (err) {
+        HardwareEngine.triggerLockoutFailure();
+        alert(`Security Node Refusal: ${err.message}`);
       }
-
-      HardwareEngine.triggerSuccess();
-      localStorage.setItem('ktj_sandbox_username', user.toUpperCase());
-      if(!localStorage.getItem('ktj_sandbox_balance')) localStorage.setItem('ktj_sandbox_balance', "0.00");
-      window.location.href = 'lobby.html';
     };
 
     function executeLockoutSequence() {
