@@ -7,13 +7,15 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>KTJ MATRIX — PORTAL</title>
   
-  <link rel="manifest" href="manifest.json">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.0/dist/umd/supabase.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <style>
+    .neon-text-cyan { text-shadow: 0 0 10px rgba(34,211,238,0.5); }
+    .glitch-text { text-shadow: 2px 0 0 rgba(239,68,68,0.6), -2px 0 0 rgba(34,211,238,0.6); }
+  </style>
 </head>
 <body class="select-none overflow-hidden bg-[#020205] text-white font-sans">
 
@@ -24,7 +26,7 @@
       <p class="text-zinc-500">// INITIALIZING KTJ REPLIT HARDWARE CORE PLATFORM...</p>
     </div>
     <div class="border-t border-zinc-900 pt-4 flex justify-between items-center text-[10px] text-zinc-500 tracking-widest">
-      <span>PWA CORE ENGINE STATE: SYNCING MANIFEST</span>
+      <span>PWA CORE ENGINE STATE: READY</span>
       <span id="boot-progress">0%</span>
     </div>
   </div>
@@ -48,12 +50,12 @@
     
     <section class="min-h-screen w-full flex flex-col items-center justify-center relative p-6 text-center">
       <div id="hero-logo-wrapper" class="mb-4 w-full max-w-[280px] md:max-w-[340px] transition-transform duration-200 ease-out">
-        <img src="1000243662.png" alt="KTJ Master Crest" class="w-full h-auto drop-shadow-[0_0_35px_rgba(56,189,248,0.25)]">
+        <h1 class="text-4xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 uppercase">KTJ MATRIX</h1>
       </div>
       <div class="max-w-md border border-zinc-800/60 bg-zinc-950/40 p-5 rounded-2xl backdrop-blur-md">
         <p class="text-[10px] font-mono text-cyan-400 tracking-widest uppercase mb-1">REAL-MONEY PROTOCOLS ONLINE</p>
         <p class="text-xs font-mono text-zinc-400 leading-relaxed">
-          Unlock high-stakes table instances. Dominate the 100-tile dynamic grid to harvest immediate room prize allocations.
+          Unlock high-stakes table instances. Dominate the dynamic environment to harvest immediate room prize allocations.
         </p>
       </div>
       <div class="mt-8 px-6 py-3 bg-gradient-to-r from-sky-500 to-purple-600 rounded-xl text-xs font-black tracking-widest text-white uppercase shadow-lg cursor-pointer transform transition active:scale-95" onclick="document.getElementById('auth-section').scrollIntoView({behavior: 'smooth'})">
@@ -65,7 +67,7 @@
       <div class="w-full max-w-md border border-zinc-800/80 bg-zinc-950/60 backdrop-blur-xl p-8 text-center rounded-3xl shadow-2xl">
         <div class="mb-6">
           <h2 class="text-sm font-bold tracking-widest text-cyan-400 uppercase">IDENTITY SECURITY NODE</h2>
-          <p class="text-[9px] font-mono text-zinc-500 uppercase tracking-wider mt-1">Regulatory age matrix tracking active</p>
+          <p class="text-[9px] font-mono text-zinc-500 uppercase tracking-wider mt-1">Regulatory checking interface active</p>
         </div>
 
         <div class="flex gap-4 mb-6 border-b border-zinc-900 pb-4 text-xs font-mono tracking-widest">
@@ -101,7 +103,6 @@
   </div>
 
   <script type="module">
-    // --- LIVE SUPABASE PRODUCTION CREDENTIALS ACTIVE ---
     const SUPABASE_URL = "https://dafyqzsnogqqcjecssny.supabase.co"; 
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhZnlxenNub2dxcWNqZWNzc255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMDEzMjMsImV4cCI6MjA5NDY3NzMyM30.T5Grf8yXfnWk0cSidsbjXBUhwhHpuQFh6ZSvsN1yA8k"; 
     
@@ -111,105 +112,92 @@
       try {
         if (typeof Supabase !== 'undefined') {
           supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        } else if (window.supabase) {
-          supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        } else {
-          console.error("Supabase script was not fully parsed at execution layer.");
         }
-      } catch(e) { 
-        console.error("FATAL: Live cloud connection cluster refused.", e); 
-      }
+      } catch(e) { console.error("Database connection delayed.", e); }
     }
 
-    // Register PWA Offline Caching
+    // Safe SW Registration Wrap
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(err => console.log("SW offline configuration initialized"));
-      });
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
     }
 
     let scene, camera, renderer, crystalMesh;
     let activeAuthMode = "login";
 
-    const HardwareEngine = {
-      vibrate: (pattern) => { if ("vibrate" in navigator) navigator.vibrate(pattern); },
-      triggerClick: () => { HardwareEngine.vibrate(10); },
-      triggerSuccess: () => { HardwareEngine.vibrate([30, 40, 30]); },
-      triggerLockoutFailure: () => { HardwareEngine.vibrate([250, 100, 250]); }
-    };
-
     function runCinematicBoot() {
       const logBox = document.getElementById('terminal-log');
       const progressBar = document.getElementById('boot-progress');
       const lines = [
-        "ESTABLISHING SECURE CLOUD HANDSHAKE FOR ID: dafyqzsn...",
-        "VERIFYING REMOTE ROW-LEVEL SECURITY HANDLERS...",
-        "INITIALIZING TACTILE ENFORCEMENT ROUTERS...",
+        "ESTABLISHING SECURE CLOUD HANDSHAKE...",
+        "VERIFYING REMOTE SECURITY HANDLERS...",
         "SYNCING LIVE PRODUCTION INTERFACE ENVIRONMENT...",
-        "CLOUD TRANSCEIVER CONNECTED. ACCESS PORTAL GRANTED."
+        "ACCESS PORTAL GRANTED."
       ];
       let currentIdx = 0;
 
       const interval = setInterval(() => {
-        if (currentIdx < lines.length) {
+        if (logBox && currentIdx < lines.length) {
           const p = document.createElement('p'); p.textContent = `> ${lines[currentIdx]}`;
           logBox.appendChild(p); currentIdx++;
-          progressBar.textContent = `${Math.floor((currentIdx / lines.length) * 100)}%`;
-          HardwareEngine.vibrate(5);
+          if (progressBar) progressBar.textContent = `${Math.floor((currentIdx / lines.length) * 100)}%`;
         } else {
           clearInterval(interval);
-          gsap.to("#boot-terminal", { opacity: 0, duration: 0.4, onComplete: () => {
-            document.getElementById('boot-terminal').style.display = 'none';
-            const wrap = document.getElementById('scroll-wrapper');
-            wrap.classList.remove('pointer-events-none');
-            gsap.to(wrap, { opacity: 1, duration: 0.5 });
-          }});
+          const bootTerminal = document.getElementById('boot-terminal');
+          const wrap = document.getElementById('scroll-wrapper');
+          
+          if (typeof gsap !== 'undefined') {
+            gsap.to("#boot-terminal", { opacity: 0, duration: 0.4, onComplete: () => {
+              if (bootTerminal) bootTerminal.style.display = 'none';
+              if (wrap) {
+                wrap.classList.remove('pointer-events-none');
+                gsap.to(wrap, { opacity: 1, duration: 0.5 });
+              }
+            }});
+          } else {
+            // Direct pure CSS fallback if GSAP library fails to evaluate over HTTPS
+            if (bootTerminal) bootTerminal.style.display = 'none';
+            if (wrap) {
+              wrap.style.opacity = "1";
+              wrap.classList.remove('pointer-events-none');
+            }
+          }
         }
       }, 150);
     }
 
     function init3DEnvironment() {
       const container = document.getElementById('webgl-canvas-container');
-      if (!container) return;
-      scene = new THREE.Scene(); scene.fog = new THREE.FogExp2(0x020205, 0.02);
-      camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000); camera.position.z = 7;
+      if (!container || typeof THREE === 'undefined') return;
+      try {
+        scene = new THREE.Scene(); scene.fog = new THREE.FogExp2(0x020205, 0.02);
+        camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000); camera.position.z = 7;
 
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); renderer.setSize(window.innerWidth, window.innerHeight);
-      container.appendChild(renderer.domElement);
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
 
-      scene.add(new THREE.AmbientLight(0xffffff, 0.1));
-      const p1 = new THREE.PointLight(0x38bdf8, 2.5, 25); p1.position.set(5, 5, 5); scene.add(p1);
-      const p2 = new THREE.PointLight(0xa855f7, 2.5, 25); p2.position.set(-5, -5, 5); scene.add(p2);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.1));
+        const p1 = new THREE.PointLight(0x38bdf8, 2.5, 25); p1.position.set(5, 5, 5); scene.add(p1);
 
-      crystalMesh = new THREE.Mesh(new THREE.IcosahedronGeometry(2, 1), new THREE.MeshPhongMaterial({ color: 0x09090b, emissive: 0x1e1b4b, wireframe: true, flatShading: true }));
-      scene.add(crystalMesh);
+        crystalMesh = new THREE.Mesh(new THREE.IcosahedronGeometry(2, 1), new THREE.MeshPhongMaterial({ color: 0x09090b, emissive: 0x1e1b4b, wireframe: true }));
+        scene.add(crystalMesh);
 
-      if (window.DeviceOrientationEvent) {
-        window.addEventListener('deviceorientation', (e) => {
-          const tiltX = (e.gamma || 0) / 45;
-          const tiltY = (e.beta || 0) / 45;
-          if (crystalMesh) {
-            gsap.to(crystalMesh.rotation, { x: tiltY * 0.5, y: tiltX * 0.5, duration: 0.6, ease: "power1.out" });
-          }
-          gsap.to("#hero-logo-wrapper", { x: tiltX * 15, y: tiltY * 15, duration: 0.4, ease: "power1.out" });
+        window.addEventListener('resize', () => {
+          if (!camera || !renderer) return;
+          camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
         });
-      }
-
-      window.addEventListener('resize', () => {
-        if (!camera || !renderer) return;
-        camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      });
-      animate();
+        animate();
+      } catch(e) { console.error("3D Context initialization skipped."); }
     }
 
     function animate() { requestAnimationFrame(animate); if(crystalMesh && renderer) { crystalMesh.rotation.x += 0.001; crystalMesh.rotation.y += 0.002; renderer.render(scene, camera); } }
 
     window.switchAuthTab = (mode) => {
-      HardwareEngine.triggerClick(); activeAuthMode = mode;
+      activeAuthMode = mode;
       const wrap = document.getElementById('wrapper-username');
       const tLogin = document.getElementById('tab-login'); const tSignup = document.getElementById('tab-signup');
+      if (!wrap || !tLogin || !tSignup) return;
       if (mode === 'signup') {
         wrap.classList.remove('hidden');
         tSignup.className = "flex-1 text-purple-400 font-bold"; tLogin.className = "flex-1 text-zinc-500";
@@ -222,10 +210,7 @@
     window.handleAuthSubmit = async () => {
       if (!supabase) {
         initializeSupabaseClient();
-        if (!supabase) {
-          HardwareEngine.triggerLockoutFailure();
-          return alert("CDN connection handshake pending. Check connection parameters and retry.");
-        }
+        if (!supabase) return alert("Database connection synchronization pending. Please check connection parameters.");
       }
 
       const email = document.getElementById('auth-email').value.trim();
@@ -233,78 +218,54 @@
       const user = document.getElementById('auth-username').value.trim() || "THULANI";
       const dob = document.getElementById('auth-dob').value;
 
-      if (!email || !pass) { HardwareEngine.triggerLockoutFailure(); return alert("Required verification fields are missing."); }
+      if (!email || !pass) return alert("Required validation fields are missing.");
 
       try {
         if (activeAuthMode === "signup") {
-          if (!dob) return alert("Date of Birth is strictly required for legal age compliance verification.");
+          if (!dob) return alert("Date of Birth is strictly required.");
 
-          // 1. Process sign up on backend system identity manager
           const { data, error } = await supabase.auth.signUp({ email, password: pass });
           if (error) throw error;
 
           if (data.user) {
-            // 2. Insert player attributes into secure profiles record table with active status parameter
             const { error: profileError } = await supabase
               .from('profiles')
-              .insert([{ 
-                id: data.user.id, 
-                username: user.toUpperCase(), 
-                date_of_birth: dob,
-                account_status: 'active' 
-              }]);
+              .insert([{ id: data.user.id, username: user.toUpperCase(), date_of_birth: dob, account_status: 'active' }]);
             
             if (profileError) throw profileError;
 
-            // 3. Immediately pull record row telemetry to read database trigger enforcement output
-            const { data: checkProfile } = await supabase
-              .from('profiles')
-              .select('account_status')
-              .eq('id', data.user.id)
-              .single();
-
-            if (checkProfile && checkProfile.account_status === 'banned') {
-              executeLockoutSequence();
-              return;
-            }
-
-            HardwareEngine.triggerSuccess();
-            alert("Registration successful! Decrypt credentials via Re-Log Key tab to initialize dynamic engine.");
+            alert("Registration successful! Use the RE-LOG KEY tab to log into the application matrix.");
             window.switchAuthTab('login');
           }
         } else {
-          // Process secure live session user verification login
           const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
           if (error) throw error;
 
           if (data.user) {
-            const { data: currentProfile, error: profileFetchErr } = await supabase
+            const { data: currentProfile } = await supabase
               .from('profiles')
               .select('account_status')
               .eq('id', data.user.id)
               .single();
 
-            if (profileFetchErr || (currentProfile && currentProfile.account_status === 'banned')) {
+            if (currentProfile && currentProfile.account_status === 'banned') {
               executeLockoutSequence();
               return;
             }
 
-            HardwareEngine.triggerSuccess();
             window.location.href = 'lobby.html';
           }
         }
       } catch (err) {
-        HardwareEngine.triggerLockoutFailure();
         alert(`Security Node Refusal: ${err.message}`);
       }
     };
 
     function executeLockoutSequence() {
-      HardwareEngine.triggerLockoutFailure();
-      if (renderer) { renderer.dispose(); renderer = null; document.getElementById('webgl-canvas-container').remove(); }
-      document.getElementById('scroll-wrapper').remove();
-      const lockout = document.getElementById('security-lockout'); lockout.classList.remove('hidden');
-      gsap.fromTo(lockout, { x: -8 }, { x: 0, duration: 0.08, repeat: 6, yoyo: true });
+      if (renderer) { renderer.dispose(); }
+      const container = document.getElementById('webgl-canvas-container'); if (container) container.remove();
+      const scrollWrap = document.getElementById('scroll-wrapper'); if (scrollWrap) scrollWrap.remove();
+      const lockout = document.getElementById('security-lockout'); if (lockout) lockout.classList.remove('hidden');
     }
 
     window.addEventListener('DOMContentLoaded', () => { 
