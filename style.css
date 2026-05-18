@@ -1,6 +1,8 @@
 :root {
   --bg-main: #020205;
   --bg-card: rgba(9, 9, 14, 0.85);
+  
+  /* Brand color parameters extracted from your premium KTJ logo */
   --neon-cyan: #38bdf8;
   --neon-purple: #a855f7;
   --metal-edge: #27272a;
@@ -18,28 +20,28 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Eliminate browser delays for rapid responsive mobile tapping */
+/* Eliminate all artificial mobile web latency for instant tapping */
 button, input, select {
   touch-action: manipulation;
 }
 
-/* Metallic paneling frames mimicking the KTJ crest border */
+/* High-fidelity panel design matching the logo's outer shield trim */
 .ktj-card {
   background: var(--bg-card);
-  border: 1px solid var(--metal-edge);
+  border: 2px solid var(--metal-edge);
   border-radius: 1.5rem;
   backdrop-filter: blur(16px);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.02);
 }
 
 .neon-text-cyan {
   color: var(--neon-cyan);
-  text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
 }
 
 .neon-text-purple {
   color: var(--neon-purple);
-  text-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+  text-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
 }
 
 .neon-input {
@@ -55,13 +57,14 @@ button, input, select {
   box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
 }
 
-/* Visual click compression response for touch screens */
+/* Tactile haptic-style visual compression on touch input */
 .ktj-btn-active:active {
   transform: scale(0.96);
-  filter: brightness(1.15);
+  filter: brightness(1.2);
+  transition: transform 0.05s ease;
 }
 
-/* Hiding default desktop scroll track profiles for application wrapper feel */
+/* Retain professional standalone application spacing bounds */
 ::-webkit-scrollbar {
   width: 0px;
   background: transparent;
