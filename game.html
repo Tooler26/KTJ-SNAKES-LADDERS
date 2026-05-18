@@ -3,36 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-  <title>KTJ SNAKES & LADDERS — ARENA LIVE</title>
+  <title>KTJ SNAKES & LADDERS — CYBER TRACK GRID</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.0/dist/umd/supabase.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
-    #board-matrix-grid { display: grid; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(10, 1fr); background: rgba(9, 9, 14, 0.9); border: 2px solid #27272a; }
-    .tile-node { border: 1px solid rgba(39, 39, 42, 0.2); position: relative; }
-    .player-token { width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 10px currentColor; }
+    #arena-relative-container { position: relative; width: 100%; aspect-ratio: 1 / 1; }
+    #board-matrix-grid { display: grid; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(10, 1fr); background: rgba(5, 5, 10, 0.95); border: 2px solid #27272a; width: 100%; height: 100%; }
+    .tile-node { border: 1px solid rgba(63, 63, 70, 0.15); position: relative; z-index: 10; }
+    .player-token { width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 12px currentColor; z-index: 30; }
+    #vector-track-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; }
   </style>
 </head>
 <body class="p-4 flex flex-col justify-between h-screen max-w-md mx-auto overflow-hidden">
 
-  <header class="w-full flex justify-between items-center bg-zinc-950/80 p-3 border border-zinc-900 rounded-2xl">
+  <header class="w-full flex justify-between items-center bg-zinc-950/90 p-3 border border-zinc-900 rounded-2xl">
     <div>
-      <h2 class="text-[10px] font-bold tracking-widest text-zinc-400 uppercase">KTJ MATRIX GAME ARENA</h2>
-      <p id="turn-readout" class="text-[9px] font-mono neon-text-cyan uppercase mt-0.5">SYNCHRONIZING TURNS...</p>
+      <h2 class="text-[10px] font-bold tracking-widest text-zinc-400 uppercase">KTJ MATRIX MATCHROOM</h2>
+      <p id="turn-readout" class="text-[9px] font-mono neon-text-cyan uppercase mt-0.5">CYBER NETWORKS CONNECTED</p>
     </div>
     <button onclick="window.location.href='lobby.html'" class="px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-xl text-[9px] font-mono tracking-widest text-zinc-500 uppercase active:scale-95">FORFEIT</button>
   </header>
 
-  <div class="my-4 aspect-square w-full">
-    <div id="board-matrix-grid" class="w-full h-full rounded-2xl overflow-hidden p-1 gap-0.5"></div>
+  <div id="arena-relative-container" class="my-2">
+    <div id="board-matrix-grid" class="rounded-2xl overflow-hidden p-1 gap-0.5"></div>
+    <canvas id="vector-track-canvas"></canvas>
   </div>
 
-  <footer class="w-full bg-zinc-950/80 p-4 border border-zinc-900 rounded-3xl text-center space-y-3">
+  <footer class="w-full bg-zinc-950/90 p-4 border border-zinc-900 rounded-3xl text-center space-y-3">
     <div class="flex justify-between items-center px-2">
-      <span class="text-[9px] font-mono text-zinc-500 uppercase tracking-widest">Tile Location Index: <span id="idx-pos-text" class="text-white font-bold">1</span>/100</span>
-      <span class="text-[9px] font-mono text-zinc-500 uppercase tracking-widest">Dice Output: <span id="dice-roll-text" class="neon-text-purple font-bold">0</span></span>
+      <span class="text-[9px] font-mono text-zinc-500 uppercase tracking-widest">GRID SLOT: <span id="idx-pos-text" class="text-white font-bold">1</span>/100</span>
+      <span class="text-[9px] font-mono text-zinc-500 uppercase tracking-widest">DICE TRANSCEIVER: <span id="dice-roll-text" class="neon-text-purple font-bold">0</span></span>
     </div>
     <button id="dice-trigger-btn" onclick="window.triggerDiceRollExecution()" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-xs font-black tracking-widest text-white uppercase rounded-2xl shadow-lg ktj-btn-active">
       CYCLE QUANTUM DICE MATRIX
@@ -41,9 +43,12 @@
 
   <script type="module">
     let playerPosition = 1;
+    let canvas, ctx;
+
+    // Sourced teleport channels mapping telemetry tracks
     const snakesAndLaddersTelemetryMap = {
-      4: 14, 9: 31, 20: 38, 28: 84, 40: 59, 51: 67, 71: 91,
-      17: 7, 54: 34, 62: 19, 64: 60, 87: 24, 93: 73, 99: 78
+      4: 14, 9: 31, 20: 38, 28: 84, 40: 59, 51: 67, 71: 91, // LADDERS
+      17: 7, 54: 34, 62: 19, 64: 60, 87: 24, 93: 73, 99: 78  // SNAKES
     };
 
     function renderAestheticBoardNodes() {
@@ -52,13 +57,59 @@
         if (r % 2 === 1) { for (let c = 0; c < 10; c++) createNode(r * 10 + c + 1); }
         else { for (let c = 9; c >= 0; c--) createNode(r * 10 + c + 1); }
       }
-      refreshPlayerVisualPositions();
+      setTimeout(() => { resizeCanvasLayers(); drawCyberLaserVectors(); }, 200);
     }
 
     function createNode(num) {
       const grid = document.getElementById('board-matrix-grid'); const div = document.createElement('div');
-      div.id = `tile-${num}`; div.className = 'tile-node flex flex-col items-center justify-center font-mono text-[8px] font-bold text-zinc-700 bg-zinc-950/40 rounded-sm';
+      div.id = `tile-${num}`; div.className = 'tile-node flex flex-col items-center justify-center font-mono text-[8px] font-bold text-zinc-800 bg-zinc-950/40 rounded-sm';
       div.innerHTML = `<span>${num}</span><div class="token-container flex gap-0.5 mt-0.5"></div>`; grid.appendChild(div);
+    }
+
+    function resizeCanvasLayers() {
+      canvas = document.getElementById('vector-track-canvas'); if(!canvas) return;
+      const rect = document.getElementById('arena-relative-container').getBoundingClientRect();
+      canvas.width = rect.width; canvas.height = rect.height;
+      ctx = canvas.getContext('2d');
+    }
+
+    function drawCyberLaserVectors() {
+      if (!ctx) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      Object.keys(snakesAndLaddersTelemetryMap).forEach(start => {
+        const end = snakesAndLaddersTelemetryMap[start];
+        const isLadder = end > start;
+
+        const startEl = document.getElementById(`tile-${start}`);
+        const endEl = document.getElementById(`tile-${end}`);
+        
+        if (startEl && endEl) {
+          const sRect = startEl.getBoundingClientRect();
+          const eRect = endEl.getBoundingClientRect();
+          const pRect = document.getElementById('board-matrix-grid').getBoundingClientRect();
+
+          // Locate midpoint vectors relative to parent box dimensions
+          const x1 = (sRect.left + sRect.width / 2) - pRect.left;
+          const y1 = (sRect.top + sRect.height / 2) - pRect.top;
+          const x2 = (eRect.left + eRect.width / 2) - pRect.left;
+          const y2 = (eRect.top + eRect.height / 2) - pRect.top;
+
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          
+          // Style assignments: Cyan beams for climbing ladders, neon-purple tracks for traps
+          ctx.strokeStyle = isLadder ? 'rgba(56, 189, 248, 0.45)' : 'rgba(168, 85, 247, 0.45)';
+          ctx.lineWidth = 2;
+          ctx.setLineDash(isLadder ? [] : [4, 4]); // Dashed paths for hazards
+          ctx.stroke();
+
+          // Terminating portal dots
+          ctx.beginPath(); ctx.arc(x1, y1, 3, 0, 2 * Math.PI);
+          ctx.fillStyle = isLadder ? '#38bdf8' : '#a855f7'; ctx.fill();
+        }
+      });
     }
 
     window.triggerDiceRollExecution = () => {
@@ -73,25 +124,26 @@
         let targetPos = playerPosition + result;
         if (targetPos > 100) targetPos = playerPosition; else playerPosition = targetPos;
 
-        if (snakesAndLaddersTelemetryMap[playerPosition]) {
-          const old = playerPosition; playerPosition = snakesAndLaddersTelemetryMap[playerPosition];
-          setTimeout(() => {
-            if (playerPosition > old) {
-              if ("vibrate" in navigator) navigator.vibrate([40, 30, 40]);
-              gsap.fromTo("#board-matrix-grid", { filter: "brightness(1.6) drop-shadow(0 0 10px #a855f7)" }, { filter: "brightness(1)", duration: 0.4 });
-            } else {
-              if ("vibrate" in navigator) navigator.vibrate(200);
-              gsap.fromTo("#board-matrix-grid", { filter: "brightness(0.4) saturate(2)" }, { filter: "brightness(1)", duration: 0.4 });
-            }
-            refreshPlayerVisualPositions();
-          }, 350);
-        }
-
-        if ("vibrate" in navigator) navigator.vibrate(25);
         refreshPlayerVisualPositions();
 
+        if (snakesAndLaddersTelemetryMap[playerPosition]) {
+          const old = playerPosition; playerPosition = snakesAndLaddersTelemetryMap[playerPosition];
+          const isLadder = playerPosition > old;
+
+          setTimeout(() => {
+            if (isLadder) {
+              if ("vibrate" in navigator) navigator.vibrate([40, 30, 40]);
+              gsap.fromTo("#board-matrix-grid", { filter: "brightness(1.5) drop-shadow(0 0 15px #38bdf8)" }, { filter: "brightness(1)", duration: 0.4 });
+            } else {
+              if ("vibrate" in navigator) navigator.vibrate(200);
+              gsap.fromTo("#board-matrix-grid", { filter: "brightness(0.3) saturate(2)" }, { filter: "brightness(1)", duration: 0.4 });
+            }
+            refreshPlayerVisualPositions();
+          }, 450);
+        }
+
         if (playerPosition === 100) {
-          alert("👑 ARENA NODE SECURED! Winnings dispatched directly into your balance framework.");
+          alert("👑 ROOM COMPLETED! MATCH STAKES DISPATCHED TO WALLET CORE.");
           window.location.href = 'lobby.html'; return;
         }
         btn.disabled = false;
@@ -105,11 +157,12 @@
         const token = document.createElement('div'); token.className = 'player-token bg-cyan-400 text-cyan-400';
         currentCell.querySelector('.token-container').appendChild(token);
         document.getElementById('idx-pos-text').textContent = playerPosition;
-        gsap.fromTo(token, { scale: 0.2 }, { scale: 1, duration: 0.3, ease: "back.out(1.7)" });
+        gsap.fromTo(token, { scale: 0.1 }, { scale: 1, duration: 0.35, ease: "back.out(1.5)" });
       }
     }
 
-    window.addEventListener('DOMContentLoaded', () => { renderAestheticBoardNodes(); document.getElementById('turn-readout').textContent = "YOUR CHIP ALLOCATION TURN ACTIVE"; });
+    window.addEventListener('DOMContentLoaded', () => { renderAestheticBoardNodes(); });
+    window.addEventListener('resize', () => { resizeCanvasLayers(); drawCyberLaserVectors(); refreshPlayerVisualPositions(); });
   </script>
 </body>
 </html>

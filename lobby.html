@@ -1,16 +1,112 @@
-<script type="module">
-    const placeholderUrl = "https://your-project-id.supabase.co";
-    const SUPABASE_URL = placeholderUrl; 
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; 
-    
-    let supabase = null;
-    if (SUPABASE_URL !== placeholderUrl && !SUPABASE_URL.includes("your-project-id")) {
-      try { supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch(e){}
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+  <title>KTJ SNAKES & LADDERS — MULTIPLAYER HUB</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.0/dist/umd/supabase.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="p-4 md:p-8">
 
-    let activeUserSession = null;
+  <div class="w-full max-w-md mx-auto mb-4 text-center">
+    <img src="1000243662.png" alt="KTJ SNAKES & LADDERS" class="w-24 h-auto mx-auto drop-shadow-[0_0_15px_rgba(56,189,248,0.2)] select-none pointer-events-none">
+    <h1 class="text-[10px] font-black tracking-widest text-zinc-500 uppercase mt-2">MULTIPLAYER COMMAND STATION</h1>
+  </div>
+
+  <header class="w-full max-w-md mx-auto flex justify-between items-center mb-6 px-2">
+    <div>
+      <h2 id="display-codename" class="text-xs font-bold tracking-widest neon-text-cyan">OPERATIVE: AUTHENTICATING...</h2>
+      <p class="text-[8px] font-mono text-zinc-500 uppercase tracking-wider">LIVE MULTIPLAYER NETWORK LINK</p>
+    </div>
+    <div class="text-right">
+      <p class="text-[9px] font-mono text-zinc-400 tracking-widest uppercase">WALLET</p>
+      <h3 class="text-md font-black font-mono neon-text-purple display-wallet-balance">$0.00</h3>
+    </div>
+  </header>
+
+  <main id="lobby-screen" class="w-full max-w-md mx-auto space-y-4">
+    <div class="ktj-card p-5 border-zinc-800">
+      <h3 class="text-[10px] font-black tracking-widest text-zinc-400 uppercase mb-3 text-center">ACTIVE MATCHMAKING TIERS</h3>
+      
+      <div class="space-y-2.5" id="rooms-container">
+        <div onclick="window.selectRoomTier(1, 10.00, this)" class="room-card border border-cyan-500/40 bg-cyan-950/20 p-3.5 rounded-xl flex justify-between items-center cursor-pointer transition-all duration-200 shadow-[0_0_15px_rgba(56,189,248,0.1)]">
+          <div class="text-left">
+            <p class="text-xs font-bold text-white tracking-wide">BRONZE MATRIX ROOM</p>
+            <p class="text-[8px] font-mono text-zinc-500 uppercase">ONLINE OPERATIVES: <span class="text-cyan-400 animate-pulse">14 Active</span></p>
+          </div>
+          <span class="text-xs font-mono font-bold text-sky-400">$10.00 entry</span>
+        </div>
+
+        <div onclick="window.selectRoomTier(2, 25.00, this)" class="room-card border border-zinc-800 bg-zinc-950/40 p-3.5 rounded-xl flex justify-between items-center cursor-pointer transition-all duration-200">
+          <div class="text-left">
+            <p class="text-xs font-bold text-zinc-400 tracking-wide">SILVER APEX DECK</p>
+            <p class="text-[8px] font-mono text-zinc-500 uppercase">ONLINE OPERATIVES: <span class="text-purple-400">8 Active</span></p>
+          </div>
+          <span class="text-xs font-mono font-bold text-purple-400">$25.00 entry</span>
+        </div>
+
+        <div onclick="window.selectRoomTier(3, 50.00, this)" class="room-card border border-zinc-800 bg-zinc-950/40 p-3.5 rounded-xl flex justify-between items-center cursor-pointer transition-all duration-200">
+          <div class="text-left">
+            <p class="text-xs font-bold text-zinc-400 tracking-wide">GOLD QUANTUM VAULT</p>
+            <p class="text-[8px] font-mono text-zinc-500 uppercase">ONLINE OPERATIVES: <span class="text-amber-500">3 Waiting</span></p>
+          </div>
+          <span class="text-xs font-mono font-bold text-amber-500">$50.00 entry</span>
+        </div>
+      </div>
+    </div>
+
+    <button id="global-action-cta" class="w-full py-4 text-xs font-black tracking-widest text-white uppercase rounded-2xl bg-zinc-900 border border-zinc-800 transition-all">
+      CONNECTING COMBAT GRID LAYER...
+    </button>
+
+    <footer class="grid grid-cols-2 gap-4 pt-2">
+      <button onclick="window.AppRouter.navigateTo('lobby-screen')" class="py-3 ktj-card border-zinc-800 text-[10px] font-mono tracking-widest text-zinc-400 hover:text-white uppercase ktj-btn-active">Dashboard</button>
+      <button onclick="window.AppRouter.navigateTo('cashier-screen')" class="py-3 ktj-card border-zinc-800 text-[10px] font-mono tracking-widest text-zinc-400 hover:text-white uppercase ktj-btn-active">Cashier Module</button>
+    </footer>
+  </main>
+
+  <section id="cashier-screen" class="hidden w-full max-w-md mx-auto ktj-card p-6 border-zinc-800 space-y-6">
+    <div class="border-b border-zinc-900 pb-4 text-center">
+      <h2 class="text-sm font-bold tracking-widest neon-text-purple uppercase">FINANCIAL OPERATIONS ADAPTER</h2>
+      <p class="text-[9px] font-mono text-zinc-500 uppercase mt-1">Simulated account top-ups & payout processing loops</p>
+    </div>
+
+    <div class="space-y-3">
+      <label class="text-[9px] font-mono text-zinc-400 tracking-widest block">QUICK CHIP TOP-UP DEPOSIT (USD)</label>
+      <div class="grid grid-cols-4 gap-2">
+        <button onclick="window.selectDepositAmount(this, 10)" class="py-3 bg-zinc-900 border border-zinc-800 rounded-xl font-mono text-xs text-white transition-all">$10</button>
+        <button onclick="window.selectDepositAmount(this, 25)" class="py-3 bg-zinc-900 border border-zinc-800 rounded-xl font-mono text-xs text-white transition-all">$25</button>
+        <button onclick="window.selectDepositAmount(this, 50)" class="py-3 bg-zinc-900 border border-zinc-800 rounded-xl font-mono text-xs text-white transition-all">$50</button>
+        <button onclick="window.selectDepositAmount(this, 100)" class="py-3 bg-zinc-900 border border-zinc-800 rounded-xl font-mono text-xs text-white transition-all">$100</button>
+      </div>
+      <input id="deposit-amount-input" type="number" value="25" class="w-full neon-input rounded-xl px-4 py-3 text-xs font-mono mt-2">
+      <button onclick="window.executeSimulatedImmediateTopUp()" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-xs font-black tracking-widest text-white rounded-xl uppercase shadow-lg ktj-btn-active">
+        Execute Instant Wallet Top-Up
+      </button>
+    </div>
+
+    <div class="space-y-3 border-t border-zinc-900 pt-6">
+      <label class="text-[9px] font-mono text-zinc-400 tracking-widest block">SECURE DISPATCH AUTOMATED WITHDRAWAL REQUEST</label>
+      <input id="withdraw-amount-input" type="number" placeholder="Enter payout value ($)" class="w-full neon-input rounded-xl px-4 py-3 text-xs font-mono">
+      <input id="withdraw-address-input" type="text" placeholder="Enter processing cryptographic token destination link" class="w-full neon-input rounded-xl px-4 py-3 text-xs font-mono">
+      <button onclick="window.submitInstantWithdrawalRequest()" class="w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-xs font-black tracking-widest text-white rounded-xl uppercase shadow-lg ktj-btn-active">
+        Confirm Payout Dispatch Transfer
+      </button>
+    </div>
+
+    <button onclick="window.AppRouter.navigateTo('lobby-screen')" class="w-full py-3 bg-zinc-900 text-[10px] font-mono tracking-widest text-zinc-500 uppercase rounded-xl border border-zinc-800 ktj-btn-active">
+      Return to Main Dashboard
+    </button>
+  </section>
+
+  <script type="module">
     let selectedRoomTierCost = 10.00;
     let selectedActiveRoomId = 1;
+    let activeLocalBalance = 250.00;
 
     const HardwareEngine = {
       vibrate: (pattern) => { if ("vibrate" in navigator) navigator.vibrate(pattern); },
@@ -37,13 +133,14 @@
         const cta = document.getElementById('global-action-cta'); if (!cta) return;
         const freshCTA = cta.cloneNode(true); cta.parentNode.replaceChild(freshCTA, cta);
 
-        if (balance <= 0 || balance < selectedRoomTierCost) {
-          freshCTA.textContent = "⚠️ INSUFFICIENT FUNDS — TOP UP";
+        if (balance < selectedRoomTierCost) {
+          freshCTA.textContent = "⚠️ INSUFFICIENT PLATFORM CHIPS — TOP UP";
           freshCTA.className = "w-full py-4 bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl text-xs font-black tracking-widest text-white shadow-lg uppercase transition-all active:scale-95";
           freshCTA.addEventListener('click', () => AppRouter.navigateTo('cashier-screen'));
         } else {
-          freshCTA.textContent = "🎮 DEPLOY ENGINE TO LIVE MATCH ARENA";
-          freshCTA.className = "w-full py-4 bg-gradient-to-r from-sky-500 to-purple-600 rounded-2xl text-xs font-black tracking-widest text-white shadow-lg uppercase transition-all active:scale-95"; freshCTA.addEventListener('click', () => {
+          freshCTA.textContent = `🎮 ENTER MATCHROOM #${selectedActiveRoomId} ($${selectedRoomTierCost.toFixed(2)})`;
+          freshCTA.className = "w-full py-4 bg-gradient-to-r from-sky-500 to-purple-600 rounded-2xl text-xs font-black tracking-widest text-white shadow-lg uppercase transition-all active:scale-95";
+          freshCTA.addEventListener('click', () => {
             HardwareEngine.triggerSuccess();
             window.location.href = `game.html?room=${selectedActiveRoomId}&cost=${selectedRoomTierCost}`;
           });
@@ -51,67 +148,52 @@
       }
     };
 
-    window.selectDepositAmount = (btn, val) => { HardwareEngine.triggerClick(); document.getElementById('deposit-amount-input').value = val; };
-
-    window.executeSimulatedImmediateTopUp = async () => {
-      const amt = parseFloat(document.getElementById('deposit-amount-input').value);
-      if (!amt || amt <= 0) return;
-
-      if(!supabase) {
-        HardwareEngine.triggerSuccess();
-        let currentLocalBal = parseFloat(localStorage.getItem('ktj_sandbox_balance') || "0");
-        let newBal = currentLocalBal + amt;
-        localStorage.setItem('ktj_sandbox_balance', newBal.toFixed(2));
-        pullFreshProfileTelemetry();
-        return;
-      }
-
-      const { error } = await supabase.rpc('process_immediate_deposit', { user_id_param: activeUserSession.id, deposit_amount: amt });
-      if (error) { HardwareEngine.triggerLockoutFailure(); alert(error.message); return; }
-      HardwareEngine.triggerSuccess(); pullFreshProfileTelemetry();
+    window.selectRoomTier = (id, cost, element) => {
+      HardwareEngine.triggerClick();
+      selectedActiveRoomId = id;
+      selectedRoomTierCost = cost;
+      
+      document.querySelectorAll('.room-card').forEach(card => {
+        card.className = "room-card border border-zinc-800 bg-zinc-950/40 p-3.5 rounded-xl flex justify-between items-center cursor-pointer transition-all duration-200";
+      });
+      
+      element.className = "room-card border border-cyan-500/40 bg-cyan-950/20 p-3.5 rounded-xl flex justify-between items-center cursor-pointer transition-all duration-200 shadow-[0_0_15px_rgba(56,189,248,0.1)]";
+      AppRouter.optimizePrimaryLobbyCTA(activeLocalBalance);
     };
 
-    window.submitInstantWithdrawalRequest = async () => {
+    window.selectDepositAmount = (btn, val) => { HardwareEngine.triggerClick(); document.getElementById('deposit-amount-input').value = val; };
+
+    window.executeSimulatedImmediateTopUp = () => {
+      const amt = parseFloat(document.getElementById('deposit-amount-input').value);
+      if (!amt || amt <= 0) return;
+      HardwareEngine.triggerSuccess();
+      activeLocalBalance += amt;
+      localStorage.setItem('ktj_sandbox_balance', activeLocalBalance.toFixed(2));
+      pullFreshProfileTelemetry();
+    };
+
+    window.submitInstantWithdrawalRequest = () => {
       const amt = parseFloat(document.getElementById('withdraw-amount-input').value);
       const addr = document.getElementById('withdraw-address-input').value.trim();
       if (!amt || amt <= 0 || !addr) { HardwareEngine.triggerLockoutFailure(); return alert("Validation error."); }
-
-      if(!supabase) {
-        let currentLocalBal = parseFloat(localStorage.getItem('ktj_sandbox_balance') || "0");
-        if(amt > currentLocalBal) { HardwareEngine.triggerLockoutFailure(); alert("Insufficient sandbox value."); return; }
-        HardwareEngine.triggerSuccess();
-        localStorage.setItem('ktj_sandbox_balance', (currentLocalBal - amt).toFixed(2));
-        alert("🚀 SANDBOX PAYOUT DISPATCHED!");
-        pullFreshProfileTelemetry();
-        return;
-      }
-
-      const { error } = await supabase.rpc('process_payout_deduction', { user_id_param: activeUserSession.id, payout_amount: amt });
-      if (error) { HardwareEngine.triggerLockoutFailure(); return alert(error.message); }
-
-      HardwareEngine.triggerSuccess(); alert("🚀 WITHDRAWAL DISPATCH SUCCESSFUL!"); pullFreshProfileTelemetry();
+      if(amt > activeLocalBalance) { HardwareEngine.triggerLockoutFailure(); alert("Insufficient funds."); return; }
+      
+      HardwareEngine.triggerSuccess();
+      activeLocalBalance -= amt;
+      localStorage.setItem('ktj_sandbox_balance', activeLocalBalance.toFixed(2));
+      alert("🚀 PAYOUT REQUEST LOGGED SUCCESSFULLY!");
+      pullFreshProfileTelemetry();
     };
 
-    async function pullFreshProfileTelemetry() {
-      if (!supabase) {
-        const localUser = localStorage.getItem('ktj_sandbox_username') || "THULANI";
-        const localBal = parseFloat(localStorage.getItem('ktj_sandbox_balance') || "250.00");
-        document.getElementById('display-codename').textContent = `OPERATIVE: ${localUser}`;
-        document.querySelectorAll('.display-wallet-balance').forEach(el => el.textContent = `$${localBal.toFixed(2)}`);
-        AppRouter.optimizePrimaryLobbyCTA(localBal);
-        return;
-      }
-
-      const { data: { user } } = await supabase.auth.getUser(); if (!user) { window.location.href = 'index.html'; return; }
-      activeUserSession = user;
-
-      const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-      if (profile) {
-        document.getElementById('display-codename').textContent = `OPERATIVE: ${profile.username}`;
-        document.querySelectorAll('.display-wallet-balance').forEach(el => el.textContent = `$${profile.wallet_balance.toFixed(2)}`);
-        AppRouter.optimizePrimaryLobbyCTA(profile.wallet_balance);
-      }
+    function pullFreshProfileTelemetry() {
+      const localUser = localStorage.getItem('ktj_sandbox_username') || "THULANI";
+      activeLocalBalance = parseFloat(localStorage.getItem('ktj_sandbox_balance') || "250.00");
+      document.getElementById('display-codename').textContent = `OPERATIVE: ${localUser}`;
+      document.querySelectorAll('.display-wallet-balance').forEach(el => el.textContent = `$${activeLocalBalance.toFixed(2)}`);
+      AppRouter.optimizePrimaryLobbyCTA(activeLocalBalance);
     }
 
     window.addEventListener('DOMContentLoaded', () => { pullFreshProfileTelemetry(); });
   </script>
+</body>
+</html>
