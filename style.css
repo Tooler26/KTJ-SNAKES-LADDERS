@@ -2,7 +2,7 @@
   --bg-main: #020205;
   --bg-card: rgba(9, 9, 14, 0.85);
   
-  /* Brand color parameters extracted from your premium KTJ logo */
+  /* Brand-aligned colors from your premium KTJ logo */
   --neon-cyan: #38bdf8;
   --neon-purple: #a855f7;
   --metal-edge: #27272a;
@@ -20,12 +20,12 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Eliminate all artificial mobile web latency for instant tapping */
+/* Eliminate browser delays for high-stakes mobile response */
 button, input, select {
   touch-action: manipulation;
 }
 
-/* High-fidelity panel design matching the logo's outer shield trim */
+/* Metallic panels frames mimicking the KTJ crest border */
 .ktj-card {
   background: var(--bg-card);
   border: 2px solid var(--metal-edge);
@@ -57,14 +57,14 @@ button, input, select {
   box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
 }
 
-/* Tactile haptic-style visual compression on touch input */
+/* Visual click compression response for mobile touch screens */
 .ktj-btn-active:active {
   transform: scale(0.96);
   filter: brightness(1.2);
   transition: transform 0.05s ease;
 }
 
-/* Retain professional standalone application spacing bounds */
+/* Hiding default desktop scroll tracks for native application feel */
 ::-webkit-scrollbar {
   width: 0px;
   background: transparent;
