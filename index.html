@@ -8,10 +8,10 @@
   <title>KTJ MATRIX — PORTAL</title>
   
   <link rel="manifest" href="manifest.json">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.0/dist/umd/supabase.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.0/dist/umd/supabase.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -106,10 +106,19 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhZnlxenNub2dxcWNqZWNzc255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMDEzMjMsImV4cCI6MjA5NDY3NzMyM30.T5Grf8yXfnWk0cSidsbjXBUhwhHpuQFh6ZSvsN1yA8k"; 
     
     let supabase = null;
-    try {
-      supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    } catch(e) { 
-      console.error("FATAL: Live cloud connection cluster refused.", e); 
+
+    function initializeSupabaseClient() {
+      try {
+        if (typeof Supabase !== 'undefined') {
+          supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } else if (window.supabase) {
+          supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } else {
+          console.error("Supabase script was not fully parsed at execution layer.");
+        }
+      } catch(e) { 
+        console.error("FATAL: Live cloud connection cluster refused.", e); 
+      }
     }
 
     // Register PWA Offline Caching
@@ -161,6 +170,7 @@
 
     function init3DEnvironment() {
       const container = document.getElementById('webgl-canvas-container');
+      if (!container) return;
       scene = new THREE.Scene(); scene.fog = new THREE.FogExp2(0x020205, 0.02);
       camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000); camera.position.z = 7;
 
@@ -179,12 +189,15 @@
         window.addEventListener('deviceorientation', (e) => {
           const tiltX = (e.gamma || 0) / 45;
           const tiltY = (e.beta || 0) / 45;
-          gsap.to(crystalMesh.rotation, { x: tiltY * 0.5, y: tiltX * 0.5, duration: 0.6, ease: "power1.out" });
+          if (crystalMesh) {
+            gsap.to(crystalMesh.rotation, { x: tiltY * 0.5, y: tiltX * 0.5, duration: 0.6, ease: "power1.out" });
+          }
           gsap.to("#hero-logo-wrapper", { x: tiltX * 15, y: tiltY * 15, duration: 0.4, ease: "power1.out" });
         });
       }
 
       window.addEventListener('resize', () => {
+        if (!camera || !renderer) return;
         camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
       });
@@ -207,6 +220,15 @@
     };
 
     window.handleAuthSubmit = async () => {
+      // Direct fail-safe check in case initialization lagged behind user input click
+      if (!supabase) {
+        initializeSupabaseClient();
+        if (!supabase) {
+          HardwareEngine.triggerLockoutFailure();
+          return alert("CDN connection handshake pending. Check connection parameters and retry.");
+        }
+      }
+
       const email = document.getElementById('auth-email').value.trim();
       const pass = document.getElementById('auth-password').value.trim();
       const user = document.getElementById('auth-username').value.trim() || "THULANI";
@@ -281,7 +303,11 @@
       gsap.fromTo(lockout, { x: -8 }, { x: 0, duration: 0.08, repeat: 6, yoyo: true });
     }
 
-    window.addEventListener('DOMContentLoaded', () => { runCinematicBoot(); init3DEnvironment(); });
+    window.addEventListener('DOMContentLoaded', () => { 
+      initializeSupabaseClient();
+      runCinematicBoot(); 
+      init3DEnvironment(); 
+    });
   </script>
 </body>
 </html>
