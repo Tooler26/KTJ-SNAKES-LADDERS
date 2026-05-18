@@ -220,7 +220,6 @@
     };
 
     window.handleAuthSubmit = async () => {
-      // Direct fail-safe check in case initialization lagged behind user input click
       if (!supabase) {
         initializeSupabaseClient();
         if (!supabase) {
@@ -245,10 +244,15 @@
           if (error) throw error;
 
           if (data.user) {
-            // 2. Insert player attributes into secure profiles record table
+            // 2. Insert player attributes into secure profiles record table with active status parameter
             const { error: profileError } = await supabase
               .from('profiles')
-              .insert([{ id: data.user.id, username: user.toUpperCase(), date_of_birth: dob }]);
+              .insert([{ 
+                id: data.user.id, 
+                username: user.toUpperCase(), 
+                date_of_birth: dob,
+                account_status: 'active' 
+              }]);
             
             if (profileError) throw profileError;
 
@@ -291,7 +295,7 @@
         }
       } catch (err) {
         HardwareEngine.triggerLockoutFailure();
-        alert(`Security Node Refusal: ${err.message}`);
+        alert suicide(`Security Node Refusal: ${err.message}`);
       }
     };
 
