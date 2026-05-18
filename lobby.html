@@ -11,7 +11,93 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="p-4 md:p-8">
+>>>>>>> 9b218ea7c16bce07d2c8d24985836ef4f1da396c
 
+<<<<<<< HEAD
+  <div class="w-full max-w-md mx-auto mb-3 text-center">
+    <img src="1000243662.png" alt="KTJ Matrix Emblem" class="w-20 h-auto mx-auto drop-shadow-[0_0_15px_rgba(56,189,248,0.2)] pointer-events-none">
+    <h1 class="text-[9px] font-black tracking-widest text-zinc-500 uppercase mt-1">CORE MULTIPLAYER LOBBY ARRAY</h1>
+  </div>
+
+  <header class="w-full max-w-md mx-auto flex justify-between items-center mb-5 px-1">
+    <div>
+      <h2 id="display-codename" class="text-xs font-bold tracking-widest neon-text-cyan">OPERATIVE: PINGING NODE...</h2>
+      <p class="text-[8px] font-mono text-zinc-500 tracking-wider uppercase">SECURE TRANSMISSION STREAM</p>
+    </div>
+    <div class="text-right">
+      <p class="text-[9px] font-mono text-zinc-400 tracking-widest uppercase">BALANCE</p>
+      <h3 class="text-md font-black font-mono neon-text-purple display-wallet-balance">$0.00</h3>
+    </div>
+  </header>
+
+  <main id="lobby-screen" class="w-full max-w-md mx-auto space-y-4">
+    <div class="ktj-card p-5 border-zinc-800">
+      <h3 class="text-[10px] font-black tracking-widest text-zinc-400 uppercase mb-3 text-center">ACTIVE DEPLOYMENT MATRIX ROOMS</h3>
+      
+      <div class="space-y-2" id="rooms-container">
+        <div onclick="window.selectRoomTier(1, 10.00, this)" class="room-card border border-cyan-500/40 bg-cyan-950/20 p-3.5 rounded-xl flex justify-between items-center cursor-pointer transition-all">
+          <div class="text-left">
+            <p class="text-xs font-bold text-white tracking-wide">BRONZE NODE #01</p>
+            <p class="text-[8px] font-mono text-zinc-500 uppercase">ACTIVE TERMINALS: <span class="text-cyan-400 animate-pulse">18 Connected</span></p>
+          </div>
+          <span class="text-xs font-mono font-bold text-sky-400">$10.00 entry</span>
+        </div>
+        <div onclick="window.selectRoomTier(2, 25.00, this)" class="room-card border border-zinc-800 bg-zinc-950/40 p-3.5 rounded-xl flex justify-between items-center cursor-pointer transition-all">
+          <div class="text-left">
+            <p class="text-xs font-bold text-zinc-400 tracking-wide">SILVER APEX #02</p>
+            <p class="text-[8px] font-mono text-zinc-500 uppercase">ACTIVE TERMINALS: <span class="text-purple-400">9 Online</span></p>
+          </div>
+          <span class="text-xs font-mono font-bold text-purple-400">$25.00 entry</span>
+        </div>
+      </div>
+    </div>
+
+    <button id="global-action-cta" class="w-full py-4 text-xs font-black tracking-widest text-white uppercase rounded-2xl shadow-xl transition-all transform duration-150">
+      CALCULATING ROUTER MATRIX STATE...
+    </button>
+
+    <footer class="grid grid-cols-2 gap-4 pt-2">
+      <button onclick="window.AppRouter.navigateTo('lobby-screen')" class="py-3 ktj-card border-zinc-800 text-[10px] font-mono tracking-widest text-zinc-400 hover:text-white uppercase ktj-btn-active">Dashboard</button>
+      <button onclick="window.AppRouter.navigateTo('cashier-screen')" class="py-3 ktj-card border-zinc-800 text-[10px] font-mono tracking-widest text-zinc-400 hover:text-white uppercase ktj-btn-active">Cashier Core</button>
+    </footer>
+  </main>
+
+  <section id="cashier-screen" class="hidden w-full max-w-md mx-auto ktj-card p-6 border-zinc-800 space-y-5">
+    <div class="border-b border-zinc-900 pb-3 text-center">
+      <h2 class="text-sm font-bold tracking-widest neon-text-purple uppercase">TRANSACTION ADAPTER MODULE</h2>
+      <p class="text-[8px] font-mono text-zinc-500 uppercase mt-0.5">Quick-select high-performance ledger chips</p>
+    </div>
+
+    <div class="space-y-2">
+      <label class="text-[9px] font-mono text-zinc-400 tracking-widest block">CHIP ALLOCATION VALUE (USD)</label>
+      <div class="grid grid-cols-4 gap-2">
+        <button onclick="window.injectChipValue(10, this)" class="chip-btn py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl font-mono text-xs text-white transition-all active:scale-95">$10</button>
+        <button onclick="window.injectChipValue(25, this)" class="chip-btn py-2.5 bg-cyan-950/30 border border-cyan-800/50 rounded-xl font-mono text-xs text-cyan-400 transition-all active:scale-95 shadow-[0_0_10px_rgba(34,211,238,0.1)]">$25</button>
+        <button onclick="window.injectChipValue(50, this)" class="chip-btn py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl font-mono text-xs text-white transition-all active:scale-95">$50</button>
+        <button onclick="window.injectChipValue(100, this)" class="chip-btn py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl font-mono text-xs text-white transition-all active:scale-95">$100</button>
+      </div>
+      <input id="deposit-amount-input" type="number" value="25" class="w-full neon-input rounded-xl px-4 py-3 text-xs font-mono mt-1">
+      <button onclick="window.executeDepositAllocation()" class="w-full py-4 mt-1 bg-gradient-to-r from-emerald-500 to-teal-600 text-xs font-black tracking-widest text-white rounded-xl uppercase shadow-lg ktj-btn-active">
+        Execute Instant Top-Up Allocation
+      </button>
+    </div>
+
+    <div class="space-y-2 border-t border-zinc-900 pt-4">
+      <label class="text-[9px] font-mono text-zinc-400 tracking-widest block">AUTOMATED CONSOLE PAYOUT WITHDRAWAL</label>
+      <input id="withdraw-amount-input" type="number" placeholder="Value ($)" class="w-full neon-input rounded-xl px-4 py-3 text-xs font-mono">
+      <input id="withdraw-address-input" type="text" placeholder="Cryptographic Ledger Address String" class="w-full neon-input rounded-xl px-4 py-3 text-xs font-mono">
+      <button onclick="window.executeWithdrawalDispatch()" class="w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-xs font-black tracking-widest text-white rounded-xl uppercase shadow-lg ktj-btn-active">
+        Confirm Payout Pipeline Dispatch
+      </button>
+    </div>
+
+    <button onclick="window.AppRouter.navigateTo('lobby-screen')" class="w-full py-2.5 bg-zinc-900 text-[9px] font-mono tracking-widest text-zinc-500 uppercase rounded-xl border border-zinc-800 ktj-btn-active">
+      Return to Main Terminal
+    </button>
+  </section>
+
+  <script type="module">
+=======
   <div class="w-full max-w-md mx-auto mb-4 text-center">
     <img src="1000243662.png" alt="KTJ SNAKES & LADDERS" class="w-24 h-auto mx-auto drop-shadow-[0_0_15px_rgba(56,189,248,0.2)] select-none pointer-events-none">
     <h1 class="text-[10px] font-black tracking-widest text-zinc-500 uppercase mt-2">MULTIPLAYER COMMAND STATION</h1>
@@ -104,50 +190,84 @@
   </section>
 
   <script type="module">
+>>>>>>> 9b218ea7c16bce07d2c8d24985836ef4f1da396c
     let selectedRoomTierCost = 10.00;
     let selectedActiveRoomId = 1;
+<<<<<<< HEAD
+    let currentAccountBalance = 0.00;
+=======
     let activeLocalBalance = 250.00;
+>>>>>>> 9b218ea7c16bce07d2c8d24985836ef4f1da396c
 
     const HardwareEngine = {
       vibrate: (pattern) => { if ("vibrate" in navigator) navigator.vibrate(pattern); },
-      triggerClick: () => { HardwareEngine.vibrate(12); },
-      triggerSuccess: () => { HardwareEngine.vibrate([40, 30, 40]); },
-      triggerLockoutFailure: () => { HardwareEngine.vibrate([150, 50, 150]); }
+      triggerClick: () => { HardwareEngine.vibrate(10); },
+      triggerSuccess: () => { HardwareEngine.vibrate([30, 30, 30]); },
+      triggerFailure: () => { HardwareEngine.vibrate([150, 50, 150]); }
     };
 
+    // INTELLIGENT NAVIGATION ROUTER MATRIX
     window.AppRouter = {
       currentScreenId: 'lobby-screen',
       navigateTo: (targetScreenId) => {
         if (AppRouter.currentScreenId === targetScreenId) return;
         HardwareEngine.triggerClick();
-        const curr = document.getElementById(AppRouter.currentScreenId);
-        const targ = document.getElementById(targetScreenId);
+        const src = document.getElementById(AppRouter.currentScreenId);
+        const dest = document.getElementById(targetScreenId);
 
         gsap.timeline()
-          .to(curr, { opacity: 0, y: -8, duration: 0.15, onComplete: () => { curr.classList.add('hidden'); targ.classList.remove('hidden'); }})
-          .fromTo(targ, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.2, ease: "power2.out" });
+          .to(src, { opacity: 0, y: -6, duration: 0.12, onComplete: () => { src.classList.add('hidden'); dest.classList.remove('hidden'); }})
+          .fromTo(dest, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.18, ease: "power2.out" });
         AppRouter.currentScreenId = targetScreenId;
       },
 
-      optimizePrimaryLobbyCTA: (balance) => {
+      evaluateRouterActionState: () => {
         const cta = document.getElementById('global-action-cta'); if (!cta) return;
-        const freshCTA = cta.cloneNode(true); cta.parentNode.replaceChild(freshCTA, cta);
+        const linkedCTA = cta.cloneNode(true); cta.parentNode.replaceChild(linkedCTA, cta);
 
+<<<<<<< HEAD
+        // CONDITIONAL BRANCH EVALUATION BLOCK
+        if (currentAccountBalance < selectedRoomTierCost) {
+          linkedCTA.textContent = "⚠️ LOAD WALLET FUNDS";
+          linkedCTA.className = "w-full py-4 bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl text-xs font-black tracking-widest text-white shadow-lg uppercase transition-all active:scale-95";
+          linkedCTA.onclick = () => AppRouter.navigateTo('cashier-screen');
+=======
         if (balance < selectedRoomTierCost) {
           freshCTA.textContent = "⚠️ INSUFFICIENT PLATFORM CHIPS — TOP UP";
           freshCTA.className = "w-full py-4 bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl text-xs font-black tracking-widest text-white shadow-lg uppercase transition-all active:scale-95";
           freshCTA.addEventListener('click', () => AppRouter.navigateTo('cashier-screen'));
+>>>>>>> 9b218ea7c16bce07d2c8d24985836ef4f1da396c
         } else {
+<<<<<<< HEAD
+          linkedCTA.textContent = `🎮 ENTER LIVE MATCHROOM #${selectedActiveRoomId}`;
+          linkedCTA.className = "w-full py-4 bg-gradient-to-r from-sky-500 to-purple-600 rounded-2xl text-xs font-black tracking-widest text-white shadow-lg uppercase transition-all active:scale-95";
+          linkedCTA.onclick = () => {
+=======
           freshCTA.textContent = `🎮 ENTER MATCHROOM #${selectedActiveRoomId} ($${selectedRoomTierCost.toFixed(2)})`;
           freshCTA.className = "w-full py-4 bg-gradient-to-r from-sky-500 to-purple-600 rounded-2xl text-xs font-black tracking-widest text-white shadow-lg uppercase transition-all active:scale-95";
           freshCTA.addEventListener('click', () => {
+>>>>>>> 9b218ea7c16bce07d2c8d24985836ef4f1da396c
             HardwareEngine.triggerSuccess();
             window.location.href = `game.html?room=${selectedActiveRoomId}&cost=${selectedRoomTierCost}`;
-          });
+          };
         }
       }
     };
 
+<<<<<<< HEAD
+    window.selectRoomTier = (id, cost, element) => {
+      HardwareEngine.triggerClick();
+      selectedActiveRoomId = id;
+      selectedRoomTierCost = cost;
+      
+      document.querySelectorAll('.room-card').forEach(c => {
+        c.className = "room-card border border-zinc-800 bg-zinc-950/40 p-3.5 rounded-xl flex justify-between items-center cursor-pointer transition-all";
+      });
+      element.className = "room-card border border-cyan-500/40 bg-cyan-950/20 p-3.5 rounded-xl flex justify-between items-center cursor-pointer transition-all shadow-[0_0_15px_rgba(56,189,248,0.1)]";
+      
+      AppRouter.evaluateRouterActionState();
+    };
+=======
     window.selectRoomTier = (id, cost, element) => {
       HardwareEngine.triggerClick();
       selectedActiveRoomId = id;
@@ -162,19 +282,55 @@
     };
 
     window.selectDepositAmount = (btn, val) => { HardwareEngine.triggerClick(); document.getElementById('deposit-amount-input').value = val; };
+>>>>>>> 9b218ea7c16bce07d2c8d24985836ef4f1da396c
 
+<<<<<<< HEAD
+    window.injectChipValue = (val, btn) => {
+      HardwareEngine.triggerClick();
+      document.getElementById('deposit-amount-input').value = val;
+      document.querySelectorAll('.chip-btn').forEach(b => {
+        b.className = "chip-btn py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl font-mono text-xs text-white transition-all active:scale-95";
+      });
+      btn.className = "chip-btn py-2.5 bg-cyan-950/30 border border-cyan-800/50 rounded-xl font-mono text-xs text-cyan-400 transition-all active:scale-95 shadow-[0_0_10px_rgba(34,211,238,0.1)]";
+    };
+
+    window.executeDepositAllocation = () => {
+=======
     window.executeSimulatedImmediateTopUp = () => {
+>>>>>>> 9b218ea7c16bce07d2c8d24985836ef4f1da396c
       const amt = parseFloat(document.getElementById('deposit-amount-input').value);
       if (!amt || amt <= 0) return;
+<<<<<<< HEAD
+      HardwareEngine.triggerSuccess();
+      currentAccountBalance += amt;
+      localStorage.setItem('ktj_sandbox_balance', currentAccountBalance.toFixed(2));
+      pullFreshProfileTelemetry();
+      AppRouter.navigateTo('lobby-screen');
+=======
       HardwareEngine.triggerSuccess();
       activeLocalBalance += amt;
       localStorage.setItem('ktj_sandbox_balance', activeLocalBalance.toFixed(2));
       pullFreshProfileTelemetry();
+>>>>>>> 9b218ea7c16bce07d2c8d24985836ef4f1da396c
     };
 
+<<<<<<< HEAD
+    window.executeWithdrawalDispatch = () => {
+=======
     window.submitInstantWithdrawalRequest = () => {
+>>>>>>> 9b218ea7c16bce07d2c8d24985836ef4f1da396c
       const amt = parseFloat(document.getElementById('withdraw-amount-input').value);
       const addr = document.getElementById('withdraw-address-input').value.trim();
+<<<<<<< HEAD
+      if (!amt || amt <= 0 || !addr) { HardwareEngine.triggerFailure(); return alert("Input parameters faulty."); }
+      if (amt > currentAccountBalance) { HardwareEngine.triggerFailure(); return alert("Insufficient account allocations."); }
+
+      HardwareEngine.triggerSuccess();
+      currentAccountBalance -= amt;
+      localStorage.setItem('ktj_sandbox_balance', currentAccountBalance.toFixed(2));
+      alert("🚀 PAYOUT TRANSMISSION RECORDED!");
+      pullFreshProfileTelemetry();
+=======
       if (!amt || amt <= 0 || !addr) { HardwareEngine.triggerLockoutFailure(); return alert("Validation error."); }
       if(amt > activeLocalBalance) { HardwareEngine.triggerLockoutFailure(); alert("Insufficient funds."); return; }
       
@@ -183,14 +339,26 @@
       localStorage.setItem('ktj_sandbox_balance', activeLocalBalance.toFixed(2));
       alert("🚀 PAYOUT REQUEST LOGGED SUCCESSFULLY!");
       pullFreshProfileTelemetry();
+>>>>>>> 9b218ea7c16bce07d2c8d24985836ef4f1da396c
     };
 
+<<<<<<< HEAD
+    function pullFreshProfileTelemetry() {
+      const user = localStorage.getItem('ktj_sandbox_username') || "THULANI";
+      currentAccountBalance = parseFloat(localStorage.getItem('ktj_sandbox_balance') || "0.00");
+      
+      document.getElementById('display-codename').textContent = `OPERATIVE: ${user}`;
+      document.querySelectorAll('.display-wallet-balance').forEach(el => el.textContent = `$${currentAccountBalance.toFixed(2)}`);
+      
+      AppRouter.evaluateRouterActionState();
+=======
     function pullFreshProfileTelemetry() {
       const localUser = localStorage.getItem('ktj_sandbox_username') || "THULANI";
       activeLocalBalance = parseFloat(localStorage.getItem('ktj_sandbox_balance') || "250.00");
       document.getElementById('display-codename').textContent = `OPERATIVE: ${localUser}`;
       document.querySelectorAll('.display-wallet-balance').forEach(el => el.textContent = `$${activeLocalBalance.toFixed(2)}`);
       AppRouter.optimizePrimaryLobbyCTA(activeLocalBalance);
+>>>>>>> 9b218ea7c16bce07d2c8d24985836ef4f1da396c
     }
 
     window.addEventListener('DOMContentLoaded', () => { pullFreshProfileTelemetry(); });

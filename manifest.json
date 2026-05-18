@@ -1,0 +1,17 @@
+{
+  "short_name": "KTJ Matrix",
+  "name": "KTJ Snakes & Ladders Matrix Arena",
+  "icons": [
+    {
+      "src": "1000243662.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#020205",
+  "theme_color": "#38bdf8",
+  "display": "standalone",
+  "orientation": "portrait"
+}
